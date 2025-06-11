@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 export default function Home() {
   const [email, setEmail] = useState('');
@@ -15,8 +15,12 @@ export default function Home() {
         licenseKey: license,
       });
       setMessage(res.data.message || 'License valid!');
-    } catch (error: any) {
-      setMessage(error.response?.data?.error || 'Validation failed.');
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setMessage(error.response?.data?.error || 'Validation failed.');
+      } else {
+        setMessage('An unknown error occurred.');
+      }
     }
   };
 
@@ -50,8 +54,4 @@ export default function Home() {
           Validate
         </button>
 
-        {message && <p className="mt-4 text-center text-gray-700">{message}</p>}
-      </div>
-    </main>
-  );
-}
+        {message && <p className="mt-4 text-center text-gray-70
