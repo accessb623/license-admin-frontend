@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 
 export default function Home() {
   const [email, setEmail] = useState('');
@@ -19,7 +19,7 @@ export default function Home() {
       if (axios.isAxiosError(error)) {
         setMessage(error.response?.data?.error || 'Validation failed.');
       } else {
-        setMessage('An unknown error occurred.');
+        setMessage('Validation failed.');
       }
     }
   };
@@ -54,4 +54,8 @@ export default function Home() {
           Validate
         </button>
 
-        {message && <p className="mt-4 text-center text-gray-70
+        {message && <p className="mt-4 text-center text-gray-700">{message}</p>}
+      </div>
+    </main> // ✅ This closing tag was missing
+  );
+}
