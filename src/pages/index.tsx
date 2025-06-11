@@ -14,12 +14,29 @@ export default function Home() {
         hardwareId,
         licenseKey: license,
       });
-      setMessage(res.data.message || 'License valid!');
-    } catch (error: unknown) {
+      setMessage(res.data.message || '✅ License valid!');
+    } catch (error) {
       if (axios.isAxiosError(error)) {
-        setMessage(error.response?.data?.error || 'Validation failed.');
+        setMessage(error.response?.data?.error || '❌ Validation failed.');
       } else {
-        setMessage('Validation failed.');
+        setMessage('❌ Validation failed.');
+      }
+    }
+  };
+
+  const handleGenerate = async () => {
+    try {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/generate-license`, {
+        email,
+        hardwareId,
+      });
+      setLicense(res.data.licenseKey); // Auto-fill license input with generated key
+      setMessage(res.data.message || '✅ License generated!');
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        setMessage(error.response?.data?.error || '❌ License generation failed.');
+      } else {
+        setMessage('❌ License generation failed.');
       }
     }
   };
@@ -27,7 +44,7 @@ export default function Home() {
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6 text-center">License Validation</h1>
+        <h1 className="text-2xl font-bold mb-6 text-center">License Admin Panel</h1>
 
         <input
           className="w-full p-2 border mb-4 rounded"
@@ -47,15 +64,24 @@ export default function Home() {
           value={license}
           onChange={e => setLicense(e.target.value)}
         />
-        <button
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-          onClick={handleValidate}
-        >
-          Validate
-        </button>
+
+        <div className="flex gap-2">
+          <button
+            className="w-1/2 bg-green-600 text-white py-2 rounded hover:bg-green-700"
+            onClick={handleGenerate}
+          >
+            Generate
+          </button>
+          <button
+            className="w-1/2 bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+            onClick={handleValidate}
+          >
+            Validate
+          </button>
+        </div>
 
         {message && <p className="mt-4 text-center text-gray-700">{message}</p>}
       </div>
-    </main> // ✅ This closing tag was missing
+    </main>
   );
 }
